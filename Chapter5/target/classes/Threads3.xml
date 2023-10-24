@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ Parallel="classes":表示classes级别
+ 不同的classes tag可以在不同的线程下执行，相同的classes tag下的用例只能在相同的线程下执行
+ -->
+<suite name="threadsOnClass" parallel="classes" thread-count="3">
+    <test name="testOnClass">
+        <classes name="demo1">
+            <class name="com.course.testng.Threads.ThreadsOnXML3"/>
+        </classes>
+    </test>
+    <test name="d2">
+        <classes name="demo2">
+            <class name="com.course.testng.Threads.ThreadsOnXML"/>
+        </classes>
+    </test>
+
+</suite>

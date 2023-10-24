@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<suite name="ThreadsTestOnTests" parallel="tests" thread-count="2">
+    <!--
+    Parallel="tests":表示tests级别
+    不同的test tag可以在不同的线程下执行，相同的test tag下的用例只能在相同的线程下执行
+    -->
+    <test name="test1">
+        <classes>
+            <class name="com.course.testng.Threads.ThreadsOnXML2"/>
+        </classes>
+    </test>
+
+    <test name="test2">
+        <classes>
+            <class name="com.course.testng.Threads.ThreadsOnXML2"/>
+        </classes>
+    </test>
+
+
+</suite>

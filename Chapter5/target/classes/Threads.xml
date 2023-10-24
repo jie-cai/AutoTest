@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<suite name="threadsTestOnMethods" parallel="methods" thread-count="2">
+    <test name="test">
+<!--
+parallel="methods":表示methods级别，所有的用例都可以在不同的线程下去执行
+thread-count：表示最大并发线程数
+xml配置这种方式不能指定线程池，只有方法才可以指定线程池
+-->
+        <classes>
+            <class name="com.course.testng.Threads.ThreadsOnXML"/>
+
+        </classes>
+
+    </test>
+
+
+
+</suite>
+
