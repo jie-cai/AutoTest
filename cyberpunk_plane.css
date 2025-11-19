@@ -30,16 +30,23 @@ body {
     width: 100%;
     height: 100%;
     background-image: 
-        linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 50px 50px;
-    animation: gridMove 20s linear infinite;
+        linear-gradient(rgba(0, 255, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(45deg, rgba(255, 0, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(-45deg, rgba(255, 255, 0, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;
+    animation: gridMove 20s linear infinite, gridPulse 4s ease-in-out infinite;
     z-index: 1;
 }
 
 @keyframes gridMove {
     0% { transform: translate(0, 0); }
     100% { transform: translate(50px, 50px); }
+}
+
+@keyframes gridPulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
 }
 
 /* 扫描线效果 */
@@ -49,15 +56,20 @@ body {
     left: 0;
     width: 100%;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #00ffff, transparent);
-    animation: scanlineMove 2s linear infinite;
+    background: linear-gradient(90deg, transparent, #00ffff, #ff00ff, #00ffff, transparent);
+    animation: scanlineMove 3s linear infinite, scanlineGlow 1s ease-in-out infinite alternate;
     z-index: 10;
-    box-shadow: 0 0 10px #00ffff;
+    box-shadow: 0 0 20px #00ffff, 0 0 40px rgba(255, 0, 255, 0.5);
 }
 
 @keyframes scanlineMove {
     0% { transform: translateY(0); }
     100% { transform: translateY(100vh); }
+}
+
+@keyframes scanlineGlow {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
 }
 
 /* 游戏画布 */
@@ -66,12 +78,16 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 2px solid #00ffff;
+    border: 3px solid #00ffff;
+    border-radius: 10px;
     box-shadow: 
-        0 0 20px #00ffff,
-        inset 0 0 20px rgba(0, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.8);
+        0 0 30px #00ffff,
+        0 0 60px rgba(0, 255, 255, 0.3),
+        inset 0 0 30px rgba(0, 255, 255, 0.2),
+        0 0 100px rgba(255, 0, 255, 0.1);
+    background: rgba(0, 0, 0, 0.9);
     z-index: 5;
+    animation: canvasGlow 4s ease-in-out infinite alternate;
 }
 
 /* 游戏UI */
@@ -84,6 +100,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    animation: slideInFromTop 1s ease-out;
 }
 
 .score-panel {
@@ -110,10 +127,17 @@ body {
 
 .score-item .value {
     display: block;
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 900;
     color: #00ffff;
-    text-shadow: 0 0 10px #00ffff;
+    text-shadow: 
+        0 0 10px #00ffff,
+        0 0 20px rgba(0, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.score-item .value.updating {
+    animation: scoreUpdate 0.5s ease;
 }
 
 .power-bar {
@@ -143,10 +167,16 @@ body {
 
 .power-fill {
     height: 100%;
-    background: linear-gradient(90deg, #ff00ff, #00ffff);
+    background: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00);
     width: 100%;
     transition: width 0.3s ease;
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+    animation: powerGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes powerGlow {
+    0% { box-shadow: 0 0 15px rgba(255, 0, 255, 0.7); }
+    100% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.9), 0 0 35px rgba(255, 255, 0, 0.5); }
 }
 
 /* 赛博朋克按钮 */
@@ -203,12 +233,13 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
+    background: linear-gradient(135deg, rgba(10, 0, 30, 0.95) 0%, rgba(30, 0, 60, 0.95) 50%, rgba(20, 10, 40, 0.95) 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 20;
+    backdrop-filter: blur(10px);
 }
 
 .title {
@@ -217,28 +248,57 @@ body {
 }
 
 .title h1 {
-    font-size: 48px;
+    font-size: 72px;
     font-weight: 900;
-    color: #00ffff;
+    background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ff00);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     text-shadow: 
-        0 0 10px #00ffff,
-        0 0 20px #00ffff,
-        0 0 30px #00ffff,
-        0 0 40px #ff00ff;
-    margin-bottom: 10px;
-    animation: titleGlow 2s ease-in-out infinite alternate;
+        0 0 20px rgba(0, 255, 255, 0.8),
+        0 0 40px rgba(255, 0, 255, 0.6),
+        0 0 60px rgba(0, 255, 255, 0.4);
+    margin-bottom: 20px;
+    animation: titleGlow 3s ease-in-out infinite alternate, gradientShift 4s ease infinite;
+    letter-spacing: 4px;
+    text-transform: uppercase;
 }
 
 @keyframes titleGlow {
-    from { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #ff00ff; }
-    to { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff, 0 0 50px #ff00ff, 0 0 60px #ff00ff; }
+    from { 
+        text-shadow: 
+            0 0 20px rgba(0, 255, 255, 0.8),
+            0 0 40px rgba(255, 0, 255, 0.6),
+            0 0 60px rgba(0, 255, 255, 0.4);
+        transform: scale(1);
+    }
+    to { 
+        text-shadow: 
+            0 0 30px rgba(0, 255, 255, 1),
+            0 0 50px rgba(255, 0, 255, 0.8),
+            0 0 70px rgba(0, 255, 255, 0.6),
+            0 0 80px rgba(255, 0, 255, 0.4);
+        transform: scale(1.05);
+    }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .subtitle {
-    font-size: 18px;
+    font-size: 24px;
     color: #ff00ff;
-    letter-spacing: 4px;
-    text-shadow: 0 0 10px #ff00ff;
+    letter-spacing: 6px;
+    text-shadow: 
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 30px rgba(255, 0, 255, 0.5);
+    animation: subtitlePulse 2s ease-in-out infinite alternate;
+    margin-bottom: 50px;
 }
 
 .start-menu {
@@ -344,6 +404,17 @@ body {
     100% { opacity: 1; }
 }
 
+@keyframes subtitlePulse {
+    0% { 
+        opacity: 0.7;
+        transform: translateY(0);
+    }
+    100% { 
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+}
+
 .pulse {
     animation: pulse 1s infinite;
 }
@@ -355,4 +426,38 @@ body {
         0 0 10px currentColor,
         0 0 15px currentColor,
         0 0 20px currentColor;
+}
+
+@keyframes slideInFromTop {
+    0% {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes canvasGlow {
+    0% { 
+        box-shadow: 
+            0 0 30px #00ffff,
+            0 0 60px rgba(0, 255, 255, 0.3),
+            inset 0 0 30px rgba(0, 255, 255, 0.2),
+            0 0 100px rgba(255, 0, 255, 0.1);
+    }
+    100% { 
+        box-shadow: 
+            0 0 40px #00ffff,
+            0 0 80px rgba(0, 255, 255, 0.5),
+            inset 0 0 40px rgba(0, 255, 255, 0.3),
+            0 0 120px rgba(255, 0, 255, 0.2);
+    }
+}
+
+@keyframes scoreUpdate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); color: #ffff00; }
+    100% { transform: scale(1); }
 }

@@ -110,9 +110,19 @@ class CyberpunkPlaneGame {
     }
     
     updateUI() {
-        document.getElementById('score').textContent = this.score;
-        document.getElementById('lives').textContent = this.lives;
-        document.getElementById('level').textContent = this.level;
+        const scoreElement = document.getElementById('score');
+        const livesElement = document.getElementById('lives');
+        const levelElement = document.getElementById('level');
+        
+        // 添加得分更新动画
+        if (scoreElement.textContent !== this.score.toString()) {
+            scoreElement.classList.add('updating');
+            setTimeout(() => scoreElement.classList.remove('updating'), 500);
+        }
+        
+        scoreElement.textContent = this.score;
+        livesElement.textContent = this.lives;
+        levelElement.textContent = this.level;
         document.getElementById('powerFill').style.width = this.power + '%';
     }
     
@@ -163,16 +173,31 @@ class CyberpunkPlaneGame {
     }
     
     createShootEffect(x, y) {
-        for (let i = 0; i < 5; i++) {
+        // 枪口火焰
+        for (let i = 0; i < 8; i++) {
             this.particles.push({
                 x: x + Math.random() * 4 - 2,
                 y: y,
-                vx: (Math.random() - 0.5) * 2,
-                vy: Math.random() * -2 - 1,
-                size: Math.random() * 3 + 1,
-                color: '#00ffff',
+                vx: (Math.random() - 0.5) * 3,
+                vy: Math.random() * -3 - 2,
+                size: Math.random() * 4 + 2,
+                color: Math.random() > 0.5 ? '#00ffff' : '#ffffff',
                 life: 1,
-                decay: 0.05
+                decay: 0.08
+            });
+        }
+        
+        // 能量环效果
+        for (let i = 0; i < 6; i++) {
+            this.particles.push({
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 4,
+                vy: Math.random() * -1 - 0.5,
+                size: Math.random() * 2 + 1,
+                color: 'rgba(0, 255, 255, 0.6)',
+                life: 0.6,
+                decay: 0.1
             });
         }
     }
@@ -277,31 +302,75 @@ class CyberpunkPlaneGame {
     }
     
     createExplosion(x, y) {
+        // 主爆炸效果
+        for (let i = 0; i < 25; i++) {
+            this.particles.push({
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 12,
+                vy: (Math.random() - 0.5) * 12,
+                size: Math.random() * 6 + 2,
+                color: Math.random() > 0.7 ? '#ff6600' : (Math.random() > 0.5 ? '#ff00ff' : '#ffff00'),
+                life: 1,
+                decay: 0.015
+            });
+        }
+        
+        // 火花效果
         for (let i = 0; i < 15; i++) {
             this.particles.push({
                 x: x,
                 y: y,
-                vx: (Math.random() - 0.5) * 8,
-                vy: (Math.random() - 0.5) * 8,
-                size: Math.random() * 5 + 2,
-                color: Math.random() > 0.5 ? '#ff6600' : '#ff00ff',
-                life: 1,
-                decay: 0.02
+                vx: (Math.random() - 0.5) * 6,
+                vy: (Math.random() - 0.5) * 6,
+                size: Math.random() * 3 + 1,
+                color: '#ffffff',
+                life: 0.8,
+                decay: 0.05
+            });
+        }
+        
+        // 冲击波效果
+        for (let i = 0; i < 10; i++) {
+            this.particles.push({
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 15,
+                vy: (Math.random() - 0.5) * 15,
+                size: Math.random() * 8 + 4,
+                color: 'rgba(255, 255, 255, 0.3)',
+                life: 0.5,
+                decay: 0.1
             });
         }
     }
     
     createHitEffect(x, y) {
+        // 击中火花
+        for (let i = 0; i < 12; i++) {
+            this.particles.push({
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 6,
+                vy: (Math.random() - 0.5) * 6,
+                size: Math.random() * 3 + 1,
+                color: Math.random() > 0.5 ? '#ffff00' : '#ffffff',
+                life: 0.7,
+                decay: 0.08
+            });
+        }
+        
+        // 能量碎片
         for (let i = 0; i < 8; i++) {
             this.particles.push({
                 x: x,
                 y: y,
-                vx: (Math.random() - 0.5) * 4,
-                vy: (Math.random() - 0.5) * 4,
-                size: Math.random() * 3 + 1,
-                color: '#ffff00',
+                vx: (Math.random() - 0.5) * 8,
+                vy: (Math.random() - 0.5) * 8,
+                size: Math.random() * 2 + 0.5,
+                color: Math.random() > 0.5 ? '#ff00ff' : '#00ffff',
                 life: 0.5,
-                decay: 0.1
+                decay: 0.12
             });
         }
     }
@@ -342,22 +411,53 @@ class CyberpunkPlaneGame {
         
         // 绘制发光效果
         ctx.shadowColor = p.glowColor;
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 25;
         
-        // 绘制飞机主体
-        ctx.fillStyle = p.color;
+        // 绘制飞机主体 - 更复杂的赛博朋克设计
+        const gradient = ctx.createLinearGradient(p.x, p.y, p.x + p.width, p.y + p.height);
+        gradient.addColorStop(0, '#00ffff');
+        gradient.addColorStop(0.5, '#ffffff');
+        gradient.addColorStop(1, '#0088cc');
+        
+        ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.moveTo(p.x + p.width/2, p.y);
-        ctx.lineTo(p.x, p.y + p.height);
-        ctx.lineTo(p.x + p.width/4, p.y + p.height * 0.8);
-        ctx.lineTo(p.x + p.width * 0.75, p.y + p.height * 0.8);
-        ctx.lineTo(p.x + p.width, p.y + p.height);
+        ctx.lineTo(p.x + p.width/4, p.y + p.height/3);
+        ctx.lineTo(p.x, p.y + p.height * 0.8);
+        ctx.lineTo(p.x + p.width/4, p.y + p.height);
+        ctx.lineTo(p.x + p.width * 0.75, p.y + p.height);
+        ctx.lineTo(p.x + p.width, p.y + p.height * 0.8);
+        ctx.lineTo(p.x + p.width * 0.75, p.y + p.height/3);
         ctx.closePath();
         ctx.fill();
         
-        // 绘制引擎光效
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(p.x + p.width/4, p.y + p.height - 5, p.width/2, 5);
+        // 绘制装甲板细节
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+        ctx.beginPath();
+        ctx.moveTo(p.x + p.width/2, p.y + p.height/4);
+        ctx.lineTo(p.x + p.width/3, p.y + p.height/2);
+        ctx.lineTo(p.x + p.width * 0.66, p.y + p.height/2);
+        ctx.closePath();
+        ctx.fill();
+        
+        // 绘制引擎光效 - 更炫酷
+        const engineGradient = ctx.createRadialGradient(
+            p.x + p.width/2, p.y + p.height, 0,
+            p.x + p.width/2, p.y + p.height, 15
+        );
+        engineGradient.addColorStop(0, '#ffffff');
+        engineGradient.addColorStop(0.5, '#00ffff');
+        engineGradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
+        
+        ctx.fillStyle = engineGradient;
+        ctx.beginPath();
+        ctx.arc(p.x + p.width/2, p.y + p.height, 15, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // 绘制侧翼发光条
+        ctx.fillStyle = '#00ffff';
+        ctx.fillRect(p.x + 5, p.y + p.height/2, 3, p.height/3);
+        ctx.fillRect(p.x + p.width - 8, p.y + p.height/2, 3, p.height/3);
         
         ctx.shadowBlur = 0;
     }
@@ -385,29 +485,82 @@ class CyberpunkPlaneGame {
         
         this.enemies.forEach(enemy => {
             ctx.shadowColor = enemy.glowColor;
-            ctx.shadowBlur = 15;
-            
-            ctx.fillStyle = enemy.color;
+            ctx.shadowBlur = 20;
             
             if (enemy.type === 'strong') {
-                // 绘制强化敌机
+                // 绘制强化敌机 - 更复杂的设计
+                const gradient = ctx.createRadialGradient(
+                    enemy.x + enemy.width/2, enemy.y + enemy.height/2, 0,
+                    enemy.x + enemy.width/2, enemy.y + enemy.height/2, enemy.width/2
+                );
+                gradient.addColorStop(0, '#ff6600');
+                gradient.addColorStop(0.7, '#ff3300');
+                gradient.addColorStop(1, '#cc0000');
+                
+                ctx.fillStyle = gradient;
                 ctx.beginPath();
                 ctx.moveTo(enemy.x + enemy.width/2, enemy.y + enemy.height);
-                ctx.lineTo(enemy.x, enemy.y);
-                ctx.lineTo(enemy.x + enemy.width/4, enemy.y + enemy.height/3);
-                ctx.lineTo(enemy.x + enemy.width * 0.75, enemy.y + enemy.height/3);
-                ctx.lineTo(enemy.x + enemy.width, enemy.y);
+                ctx.lineTo(enemy.x + enemy.width/4, enemy.y + enemy.height * 0.7);
+                ctx.lineTo(enemy.x, enemy.y + enemy.height/4);
+                ctx.lineTo(enemy.x + enemy.width/4, enemy.y);
+                ctx.lineTo(enemy.x + enemy.width * 0.75, enemy.y);
+                ctx.lineTo(enemy.x + enemy.width, enemy.y + enemy.height/4);
+                ctx.lineTo(enemy.x + enemy.width * 0.75, enemy.y + enemy.height * 0.7);
                 ctx.closePath();
                 ctx.fill();
+                
+                // 绘制装甲细节
+                ctx.fillStyle = 'rgba(255, 100, 0, 0.5)';
+                ctx.beginPath();
+                ctx.moveTo(enemy.x + enemy.width/2, enemy.y + enemy.height/3);
+                ctx.lineTo(enemy.x + enemy.width/3, enemy.y + enemy.height * 0.6);
+                ctx.lineTo(enemy.x + enemy.width * 0.66, enemy.y + enemy.height * 0.6);
+                ctx.closePath();
+                ctx.fill();
+                
+                // 绘制武器系统
+                ctx.fillStyle = '#ffff00';
+                ctx.fillRect(enemy.x + enemy.width/4 - 2, enemy.y + enemy.height - 5, 4, 8);
+                ctx.fillRect(enemy.x + enemy.width * 0.75 - 2, enemy.y + enemy.height - 5, 4, 8);
+                
             } else {
-                // 绘制普通敌机
+                // 绘制普通敌机 - 更精致的设计
+                const gradient = ctx.createLinearGradient(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
+                gradient.addColorStop(0, '#ff00ff');
+                gradient.addColorStop(0.5, '#cc00cc');
+                gradient.addColorStop(1, '#880088');
+                
+                ctx.fillStyle = gradient;
                 ctx.beginPath();
                 ctx.moveTo(enemy.x + enemy.width/2, enemy.y);
-                ctx.lineTo(enemy.x, enemy.y + enemy.height);
-                ctx.lineTo(enemy.x + enemy.width, enemy.y + enemy.height);
+                ctx.lineTo(enemy.x + enemy.width/4, enemy.y + enemy.height/3);
+                ctx.lineTo(enemy.x, enemy.y + enemy.height * 0.8);
+                ctx.lineTo(enemy.x + enemy.width/4, enemy.y + enemy.height);
+                ctx.lineTo(enemy.x + enemy.width * 0.75, enemy.y + enemy.height);
+                ctx.lineTo(enemy.x + enemy.width, enemy.y + enemy.height * 0.8);
+                ctx.lineTo(enemy.x + enemy.width * 0.75, enemy.y + enemy.height/3);
                 ctx.closePath();
                 ctx.fill();
+                
+                // 绘制驾驶舱发光
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(enemy.x + enemy.width/2, enemy.y + enemy.height/3, 3, 0, Math.PI * 2);
+                ctx.fill();
             }
+            
+            // 绘制敌机周围的气场
+            const auraGradient = ctx.createRadialGradient(
+                enemy.x + enemy.width/2, enemy.y + enemy.height/2, 0,
+                enemy.x + enemy.width/2, enemy.y + enemy.height/2, enemy.width
+            );
+            auraGradient.addColorStop(0, 'rgba(255, 0, 255, 0.3)');
+            auraGradient.addColorStop(1, 'rgba(255, 0, 255, 0)');
+            
+            ctx.fillStyle = auraGradient;
+            ctx.beginPath();
+            ctx.arc(enemy.x + enemy.width/2, enemy.y + enemy.height/2, enemy.width, 0, Math.PI * 2);
+            ctx.fill();
             
             ctx.shadowBlur = 0;
         });
