@@ -7,10 +7,31 @@
     <link rel="stylesheet" href="gomoku.css">
 </head>
 <body>
-    <h1>五子棋游戏</h1>
-    <div id="game-board"></div>
-    <div id="status">当前玩家: 黑子</div>
-    <button id="reset-btn">重新开始</button>
+    <div class="game-container">
+        <header class="game-header">
+            <h1>五子棋游戏</h1>
+            <div class="game-info">
+                <div id="status">当前玩家: 黑子</div>
+                <div id="score">
+                    <span class="score-black">黑子: <span id="black-score">0</span></span>
+                    <span class="score-white">白子: <span id="white-score">0</span></span>
+                </div>
+            </div>
+        </header>
+        
+        <div class="game-main">
+            <div id="game-board"></div>
+            
+            <div class="game-controls">
+                <button id="reset-btn" class="btn btn-primary">重新开始</button>
+                <button id="undo-btn" class="btn btn-secondary">悔棋</button>
+                <button id="ai-btn" class="btn btn-ai">AI对战</button>
+            </div>
+        </div>
+        
+        <div id="game-message" class="game-message hidden"></div>
+    </div>
+    
     <script src="gomoku.js"></script>
 </body>
 </html>
