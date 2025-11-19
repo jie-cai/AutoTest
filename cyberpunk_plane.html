@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赛博朋克飞机大战</title>
+    <link rel="stylesheet" href="cyberpunk_plane.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="background-grid"></div>
+        <div class="scanline"></div>
+        
+        <!-- 游戏UI -->
+        <div class="game-ui">
+            <div class="score-panel">
+                <div class="score-item">
+                    <span class="label">SCORE</span>
+                    <span class="value" id="score">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="label">LIVES</span>
+                    <span class="value" id="lives">3</span>
+                </div>
+                <div class="score-item">
+                    <span class="label">LEVEL</span>
+                    <span class="value" id="level">1</span>
+                </div>
+            </div>
+            
+            <div class="power-bar">
+                <div class="power-label">POWER</div>
+                <div class="power-container">
+                    <div class="power-fill" id="powerFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏画布 -->
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        
+        <!-- 开始界面 -->
+        <div class="start-screen" id="startScreen">
+            <div class="title">
+                <h1>赛博朋克大战</h1>
+                <div class="subtitle">CYBERPUNK WARFARE</div>
+            </div>
+            <div class="start-menu">
+                <button class="cyber-button" id="startButton">开始游戏</button>
+                <button class="cyber-button" id="settingsButton">设置</button>
+            </div>
+            <div class="controls-info">
+                <p>使用 WASD 或方向键移动</p>
+                <p>空格键发射子弹</p>
+            </div>
+        </div>
+        
+        <!-- 游戏结束界面 -->
+        <div class="game-over-screen" id="gameOverScreen">
+            <div class="game-over-title">
+                <h2>游戏结束</h2>
+                <div class="final-score">
+                    <span>最终得分: </span>
+                    <span id="finalScore">0</span>
+                </div>
+            </div>
+            <div class="game-over-menu">
+                <button class="cyber-button" id="restartButton">重新开始</button>
+                <button class="cyber-button" id="menuButton">返回菜单</button>
+            </div>
+        </div>
+        
+        <!-- 粒子效果容器 -->
+        <div class="particles-container" id="particlesContainer"></div>
+    </div>
+    
+    <script src="cyberpunk_plane.js"></script>
+</body>
+</html>
