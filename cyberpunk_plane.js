@@ -8,6 +8,10 @@ class CyberpunkPlaneGame {
         this.lives = 3;
         this.level = 1;
         this.power = 100;
+        this.combo = 1;
+        this.threatLevel = 0;
+        this.soundEnabled = true;
+        this.musicEnabled = true;
         
         // 游戏对象
         this.player = null;
@@ -58,6 +62,15 @@ class CyberpunkPlaneGame {
         
         document.getElementById('menuButton').addEventListener('click', () => {
             this.showMenu();
+        });
+        
+        // 音效控制
+        document.getElementById('soundToggle').addEventListener('change', (e) => {
+            this.soundEnabled = e.target.checked;
+        });
+        
+        document.getElementById('musicToggle').addEventListener('change', (e) => {
+            this.musicEnabled = e.target.checked;
         });
     }
     
@@ -110,10 +123,21 @@ class CyberpunkPlaneGame {
     }
     
     updateUI() {
-        document.getElementById('score').textContent = this.score;
+        document.getElementById('score').textContent = this.score.toLocaleString();
         document.getElementById('lives').textContent = this.lives;
         document.getElementById('level').textContent = this.level;
         document.getElementById('powerFill').style.width = this.power + '%';
+        document.getElementById('powerPercentage').textContent = this.power + '%';
+        document.getElementById('comboValue').textContent = 'x' + this.combo;
+        
+        // 更新威胁等级
+        const threatFill = document.getElementById('threatFill');
+        if (threatFill) {
+            threatFill.style.width = this.threatLevel + '%';
+        }
+        
+        // 更新小地图
+        this.updateMinimap();
     }
     
     handleInput() {
@@ -324,6 +348,16 @@ class CyberpunkPlaneGame {
             this.enemySpawnInterval = Math.max(500, 2000 - (this.level - 1) * 200);
         }
         
+        // 更新威胁等级
+        this.threatLevel = Math.min(100, this.enemies.length * 10 + this.level * 5);
+        
+        // 更新连击
+        if (this.enemies.length === 0 && this.combo < 5) {
+            this.combo = Math.min(5, this.combo + 1);
+        } else if (this.enemies.length > 3) {
+            this.combo = Math.max(1, this.combo - 1);
+        }
+        
         // 检查碰撞
         this.checkCollisions();
         
@@ -428,6 +462,43 @@ class CyberpunkPlaneGame {
             ctx.fill();
             
             ctx.restore();
+        });
+    }
+    
+    updateMinimap() {
+        const minimapCanvas = document.getElementById('minimapCanvas');
+        if (!minimapCanvas) return;
+        
+        const minimapCtx = minimapCanvas.getContext('2d');
+        const scale = 0.15;
+        
+        // 清空小地图
+        minimapCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        minimapCtx.fillRect(0, 0, minimapCanvas.width, minimapCanvas.height);
+        
+        // 绘制玩家位置
+        if (this.player) {
+            minimapCtx.fillStyle = '#00ffff';
+            minimapCtx.shadowColor = '#00ffff';
+            minimapCtx.shadowBlur = 5;
+            minimapCtx.fillRect(
+                this.player.x * scale,
+                this.player.y * scale,
+                this.player.width * scale,
+                this.player.height * scale
+            );
+            minimapCtx.shadowBlur = 0;
+        }
+        
+        // 绘制敌机位置
+        minimapCtx.fillStyle = '#ff00ff';
+        this.enemies.forEach(enemy => {
+            minimapCtx.fillRect(
+                enemy.x * scale,
+                enemy.y * scale,
+                enemy.width * scale,
+                enemy.height * scale
+            );
         });
     }
     

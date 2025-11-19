@@ -13,25 +13,62 @@
         
         <!-- 游戏UI -->
         <div class="game-ui">
-            <div class="score-panel">
-                <div class="score-item">
-                    <span class="label">SCORE</span>
-                    <span class="value" id="score">0</span>
+            <div class="hud-panel left-panel">
+                <div class="hud-item">
+                    <div class="hud-icon">⚡</div>
+                    <div class="hud-content">
+                        <div class="hud-label">SCORE</div>
+                        <div class="hud-value" id="score">0</div>
+                    </div>
                 </div>
-                <div class="score-item">
-                    <span class="label">LIVES</span>
-                    <span class="value" id="lives">3</span>
+                <div class="hud-item">
+                    <div class="hud-icon">❤️</div>
+                    <div class="hud-content">
+                        <div class="hud-label">LIVES</div>
+                        <div class="hud-value" id="lives">3</div>
+                    </div>
                 </div>
-                <div class="score-item">
-                    <span class="label">LEVEL</span>
-                    <span class="value" id="level">1</span>
+                <div class="hud-item">
+                    <div class="hud-icon">🎯</div>
+                    <div class="hud-content">
+                        <div class="hud-label">LEVEL</div>
+                        <div class="hud-value" id="level">1</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="power-bar">
-                <div class="power-label">POWER</div>
-                <div class="power-container">
-                    <div class="power-fill" id="powerFill"></div>
+            <div class="hud-panel right-panel">
+                <div class="power-display">
+                    <div class="power-header">
+                        <span class="power-icon">🔋</span>
+                        <span class="power-label">POWER CORE</span>
+                    </div>
+                    <div class="power-bar-container">
+                        <div class="power-bar-outer">
+                            <div class="power-bar-inner" id="powerFill"></div>
+                            <div class="power-bar-shine"></div>
+                        </div>
+                        <div class="power-percentage" id="powerPercentage">100%</div>
+                    </div>
+                </div>
+                <div class="combo-display">
+                    <div class="combo-text">COMBO</div>
+                    <div class="combo-value" id="comboValue">x1</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 增强的HUD元素 -->
+        <div class="hud-overlays">
+            <div class="minimap">
+                <div class="minimap-title">RADAR</div>
+                <canvas id="minimapCanvas" width="120" height="90"></canvas>
+            </div>
+            
+            <div class="threat-indicator">
+                <div class="threat-title">THREAT LEVEL</div>
+                <div class="threat-bar">
+                    <div class="threat-fill" id="threatFill"></div>
                 </div>
             </div>
         </div>
@@ -46,8 +83,24 @@
                 <div class="subtitle">CYBERPUNK WARFARE</div>
             </div>
             <div class="start-menu">
-                <button class="cyber-button" id="startButton">开始游戏</button>
-                <button class="cyber-button" id="settingsButton">设置</button>
+                <button class="cyber-button success" id="startButton">开始游戏</button>
+                <button class="cyber-button" id="settingsButton">游戏设置</button>
+                <div class="game-controls">
+                    <div class="control-item">
+                        <span class="control-label">音效</span>
+                        <label class="cyber-switch">
+                            <input type="checkbox" id="soundToggle" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                    <div class="control-item">
+                        <span class="control-label">音乐</span>
+                        <label class="cyber-switch">
+                            <input type="checkbox" id="musicToggle" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="controls-info">
                 <p>使用 WASD 或方向键移动</p>
